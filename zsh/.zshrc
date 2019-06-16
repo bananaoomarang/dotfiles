@@ -99,6 +99,22 @@ dcomp() {
    docker-compose -f $1 --project-directory . $2 "${@:3}"
 }
 
+bigboyseason() {
+    if [[ $1 = "undo" ]]; then
+        xrdb -load ~/.Xresources.small
+        swaymsg output eDP-1 enable
+        rm -f ~/.config/alacritty/alacritty.yml
+        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacritty.yml
+        sudo systemctl stop bluetooth
+    else
+        xrdb -load ~/.Xresources
+        swaymsg output eDP-1 disable
+        rm -f ~/.config/alacritty/alacritty.yml
+        ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty/alacritty.yml
+        sudo systemctl start bluetooth
+    fi
+}
+
 alias initnvm='source /usr/share/nvm/init-nvm.sh'
 
 # Setup proper term information for emacs ansi-term mode
