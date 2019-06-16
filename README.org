@@ -1,0 +1,3 @@
+* Dotfiles
+
+Can be used easily with [[https://www.gnu.org/software/stow/][Stow]]. Probably not of great use to you, unless you are me!
