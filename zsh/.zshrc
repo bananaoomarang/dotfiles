@@ -55,17 +55,6 @@ antibody bundle mafredri/zsh-async
 antibody bundle sindresorhus/pure
 
 #
-# Plugin config etc
-#
-
-export PURE_PROMPT_SYMBOL='%B>%b'
-export PURE_PROMPT_VICMD_SYMBOL='%B<%b'
-
-# history substring on up/down
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-#
 # Vi mode
 #
 
@@ -83,6 +72,17 @@ my-backward-delete-word() {
 }
 zle -N my-backward-delete-word
 bindkey '^W' my-backward-delete-word
+
+#
+# Plugin config etc
+#
+
+export PURE_PROMPT_SYMBOL='%B>%b'
+export PURE_PROMPT_VICMD_SYMBOL='%B<%b'
+
+# history substring on up/down
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 #
 # Couple of useful functions & aliases
