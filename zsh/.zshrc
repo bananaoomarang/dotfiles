@@ -115,11 +115,10 @@ bigboyseason() {
     fi
 }
 
+alias restartemacs='killall emacs && emacs --daemon'
 alias initnvm='source /usr/share/nvm/init-nvm.sh'
 
 # Setup proper term information for emacs ansi-term mode
 [[ $TERM == eterm-color ]] && export TERM=xterm
-
 export PERL5LIB=~/perl5/lib/perl5:$PERL5LIB
-
 zstyle ':notify:*' notifier /usr/bin/notify-send
