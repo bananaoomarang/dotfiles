@@ -34,6 +34,7 @@ path=(
   ~/prefix/bin
   # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
   ~/.rvm/bin
+  ~/guile-prefix/bin
   $path
 )
 
@@ -56,5 +57,4 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s` > /dev/null
 fi
 
-source /usr/share/nvm/init-nvm.sh
 eval "$(pyenv init -)"

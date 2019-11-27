@@ -48,7 +48,7 @@ bindsym $mod+Shift+q kill
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+#bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu "bemenu -i --fn 'Source Code Pro 10'" --term=alacritty --usage-log=/home/milo/.j4-dmenu-log.log
 
 # change focus
@@ -151,9 +151,6 @@ bindsym $mod+r mode "resize"
 
 exec --no-startup-id xinput --map-to-output 13 eDP1
 
-exec --no-startup-id $HOME/.config/florence/launch.sh
-for_window [title="^florence$"] floating enable; resize set 1520 480; move position center; move position 0 305px;
-
 exec --no-startup-id emacs --daemon
 
 output eDP-1 pos 0 0 res 1920x1080
@@ -161,7 +158,7 @@ output DP-1 pos 1920 0 res 3840x2160
 # output eDP-1 disable
 # output DP-1 scale 2
 
-output "*" bg $HOME/backgrounds/ernst/storm.jpg fill
+exec /usr/bin/python -m random-background
 exec --no-startup-id /usr/lib/notify-osd/notify-osd
 
 # Pulse Audio controls

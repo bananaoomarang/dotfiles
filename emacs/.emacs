@@ -101,6 +101,9 @@
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1))
 
+(use-package counsel-projectile
+  :after projectile)
+
 (use-package dracula-theme
   :config
   (load-theme 'dracula t))
@@ -167,6 +170,10 @@
    pipenv-projectile-after-switch-function
    #'pipenv-projectile-after-switch-extended))
 
+(use-package rust-mode)
+(use-package flycheck-rust
+  :hook (flycheck-mode . flycheck-rust-setup))
+
 (use-package tide
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
@@ -220,7 +227,7 @@
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)
-  (setq dashboard-startup-banner "~/vim.png")
+  (setq dashboard-startup-banner "~/images/vim.png")
   (setq dashboard-banner-logo-title "Press any button to continue"))
 
 (use-package paredit
@@ -259,6 +266,7 @@
 
 (use-package magit
   :config
+  (setq git-commit-summary-max-length 80)
   (global-set-key (kbd "C-x g") 'magit-status))
 
 (use-package evil-magit)
@@ -266,9 +274,7 @@
 (use-package forge
   :after magit)
 
-(use-package multi-term
-  :config
-  (setq multi-term-program "/bin/zsh"))
+(use-package vterm)
 
 (use-package spaceline
   :config
@@ -288,6 +294,8 @@
 
 (use-package emojify
   :hook (after-init . global-emojify-mode))
+
+(use-package pollen-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

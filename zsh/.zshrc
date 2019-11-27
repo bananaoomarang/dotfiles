@@ -50,7 +50,6 @@ source <(antibody init)
 antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle zdharma/fast-syntax-highlighting
-antibody bundle marzocchi/zsh-notify
 antibody bundle mafredri/zsh-async
 antibody bundle sindresorhus/pure
 
@@ -122,3 +121,10 @@ alias initnvm='source /usr/share/nvm/init-nvm.sh'
 [[ $TERM == eterm-color ]] && export TERM=xterm
 export PERL5LIB=~/perl5/lib/perl5:$PERL5LIB
 zstyle ':notify:*' notifier /usr/bin/notify-send
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /home/milo/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/milo/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /home/milo/node_modules/tabtab/.completions/sls.zsh ]] && . /home/milo/node_modules/tabtab/.completions/sls.zsh
