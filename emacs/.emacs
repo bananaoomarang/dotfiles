@@ -104,9 +104,9 @@
 (use-package counsel-projectile
   :after projectile)
 
-(use-package dracula-theme
+(use-package night-owl-theme
   :config
-  (load-theme 'dracula t))
+  (load-theme 'night-owl t))
 
 (use-package flycheck
   :after hydra
@@ -174,6 +174,8 @@
 (use-package flycheck-rust
   :hook (flycheck-mode . flycheck-rust-setup))
 
+(use-package kotlin-mode)
+
 (use-package tide
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
@@ -220,9 +222,9 @@
 
 (use-package indium)
 
-(use-package beacon
-  :config
-  (beacon-mode 1))
+;; (use-package beacon
+;;   :config
+;;   (beacon-mode 1))
 
 (use-package dashboard
   :config
@@ -293,7 +295,9 @@
   (setq twittering-use-master-password t))
 
 (use-package emojify
-  :hook (after-init . global-emojify-mode))
+  :hook (after-init . global-emojify-mode)
+  :config
+  (setq emojify-emoji-set "openmoji"))
 
 (use-package pollen-mode)
 

@@ -49,7 +49,7 @@ bindsym $mod+Shift+q kill
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 #bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu "bemenu -i --fn 'Source Code Pro 10'" --term=alacritty --usage-log=/home/milo/.j4-dmenu-log.log
+bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu "BEMENU_BACKEND=wayland bemenu -i --fn 'Source Code Pro 10'" --term=alacritty --usage-log=/home/milo/.j4-dmenu-log.log
 
 # change focus
 bindsym $mod+h focus left
@@ -154,7 +154,7 @@ exec --no-startup-id xinput --map-to-output 13 eDP1
 exec --no-startup-id emacs --daemon
 
 output eDP-1 pos 0 0 res 1920x1080
-output DP-1 pos 1920 0 res 3840x2160
+output DP-1 pos 1920 0 res 3840x216
 # output eDP-1 disable
 # output DP-1 scale 2
 
