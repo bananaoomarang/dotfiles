@@ -202,20 +202,6 @@
 
 (use-package kotlin-mode)
 
-(use-package tide
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-
-         (js2-mode . tide-setup)
-         (rjsx-mode . tide-setup)
-         (typescript-mode . tide-setup)
-         (web-mode . tide-setup))
-  :config
-  (tide-hl-identifier-mode +1)
-  (flycheck-add-next-checker 'javascript-standard 'javascript-tide 'append)
-  (flycheck-add-next-checker 'javascript-standard 'jsx-tide 'append))
-
 (use-package web-mode
   :config
   (setq web-mode-markup-indent-offset 2)
@@ -229,9 +215,7 @@
   (setq js2-strict-missing-semi-warning nil))
 
 (use-package rjsx-mode
-  :mode ("components\\/.*\\.js\\'"
-         "layouts\\/.*\\.js\\'"
-         "pages\\/.*\\.js\\'")
+  :mode "\\.js\\'"
   :config
   (set-face-attribute 'rjsx-attr nil
                       :underline nil
@@ -242,11 +226,23 @@
                       :weight 'bold
                       :foreground "#50fa7b"))
 
+(use-package tide
+  :after (company flycheck)
+  :hook
+  (js2-mode . tide-setup)
+  (js2-mode . tide-hl-identifier-mode)
+
+  (rjsx-mode . tide-setup)
+  (rjsx-mode . tide-hl-identifier-mode)
+
+  (web-mode . tide-setup)
+  (web-mode . tide-hl-identifier-mode)
+
+  :config
+  (tide-hl-identifier-mode +1))
+
+
 (use-package json-mode)
-
-(use-package tern)
-
-(use-package indium)
 
 ;; (use-package beacon
 ;;   :config
