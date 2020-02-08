@@ -189,6 +189,13 @@
 
   (add-hook 'python-mode-hook 'pyvenv-autoload))
 
+(use-package anaconda-mode
+  :hook (python-mode . anaconda-mode))
+(use-package company-anaconda
+  :after company
+  :config
+  (add-to-list 'company-backends 'company-anaconda))
+
 (use-package rust-mode)
 (use-package flycheck-rust
   :hook (flycheck-mode . flycheck-rust-setup))
