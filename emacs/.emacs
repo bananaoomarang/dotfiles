@@ -164,11 +164,30 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package pipenv
+  :after projectile
+
+  ;; Not sure if pipenv-activate should be necessary
+  ;; but seems like it doesn't autmatically happen
+  ;; otherise!
   :hook (python-mode . pipenv-mode)
-  :init
-  (setq
-   pipenv-projectile-after-switch-function
-   #'pipenv-projectile-after-switch-extended))
+        (python-mode . pipenv-activate))
+
+(use-package pyvenv
+  :after projectile
+  :config
+
+  (defun pyvenv-autoload ()
+    "Automatically load virtual env using .venv."
+
+    (let* ((pdir (projectile-project-root))
+           (pfile (concat pdir ".venv")))
+      (if (file-exists-p pfile)
+          (pyvenv-activate (with-temp-buffer
+                             (insert-file-contents pfile)
+                             (concat pdir
+                                     (car (split-string (buffer-string)))))))))
+
+  (add-hook 'python-mode-hook 'pyvenv-autoload))
 
 (use-package rust-mode)
 (use-package flycheck-rust
