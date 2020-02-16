@@ -255,13 +255,14 @@
   (setq dashboard-banner-logo-title "Press any button to continue"))
 
 (use-package paredit
-  :hook ((clojure-mode . paredit-mode)
-         (clojurescript-mode . paredit-mode)
-         (emacs-lisp . paredit-mode)
-         (lisp-mode . paredit-mode)
-         (scheme-mode . paredit-mode)
-         (racket-mode . paredit-mode)
-         (emacs-lisp . paredit-mode)))
+  :hook
+  (clojure-mode . paredit-mode)
+  (clojurescript-mode . paredit-mode)
+  (lisp-mode . paredit-mode)
+  (emacs-lisp-mode . paredit-mode)
+  (scheme-mode . paredit-mode)
+  (racket-mode . paredit-mode)
+  (slime-repl-mode . paredit-mode))
 
 (use-package yaml-mode
   :config
@@ -278,6 +279,15 @@
   (with-eval-after-load 'geiser-guile
     (add-to-list 'geiser-guile-load-path "/home/milo/guile-prefix/lib/guile/2.2/ccache")
     (add-to-list 'geiser-guile-load-path "/home/milo/guile-prefix/lib/guile/2.2/site-ccache")))
+
+(use-package slime
+  :config
+  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq slime-contribs '(slime-fancy slime-company)))
+
+(use-package slime-company
+  :after company)
 
 (use-package glsl-mode
   :config
