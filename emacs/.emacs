@@ -272,6 +272,10 @@
   :config
   (add-to-list 'auto-mode-alist '("\\.cljs\\.hl\\'" . clojurescript-mode)))
 
+(use-package flycheck-clj-kondo
+  :config
+  (require 'flycheck-clj-kondo))
+
 (use-package cider)
 
 (use-package geiser
