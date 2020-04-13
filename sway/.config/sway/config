@@ -177,4 +177,6 @@ exec mako --default-timeout 5000 #--border-size 8 --border-color '#c9c9c9' --bac
 
 # Idle/lock config
 exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/monet/the-summer-poppy-field-blur.jpg -s fill --ring-color 0788f9 --ring-clear-color 42f4aa --separator-color ffffff --text-color ffffff'
-         
+
+# Handle GUI apps that need root access
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
