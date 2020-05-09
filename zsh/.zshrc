@@ -107,10 +107,10 @@ bigboyseason() {
         sudo systemctl stop bluetooth
     else
         xrdb -load ~/.Xresources
-        swaymsg output eDP-1 disable
         rm -f ~/.config/alacritty/alacritty.yml
         ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty/alacritty.yml
         sudo systemctl start bluetooth
+        swaymsg output eDP-1 disable
     fi
 }
 

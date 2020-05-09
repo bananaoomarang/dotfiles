@@ -13,7 +13,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:Source Code Pro 9
+# font pango:Source Code Pro 9
 
 # Window bar colors!
 # class                 border  backgr. text    indicator child_border
@@ -25,7 +25,7 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 8
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -38,7 +38,7 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -133,14 +133,15 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "swaymsg exit"
 
 
 bar {
     swaybar_command waybar
 }
 
-input "1739:32655:MSFT0001:02_06CB:7F8F_Touchpad" {
+input "1739:52560:SYNA3297:00_06CB:CD50_Touchpad" {
     tap enabled
     natural_scroll enabled
     accel_profile adaptive
@@ -153,22 +154,30 @@ exec --no-startup-id xinput --map-to-output 13 eDP1
 
 exec --no-startup-id emacs --daemon
 
-output eDP-1 pos 0 0 res 1920x1080
-output DP-1 pos 1920 0 res 3840x216
+# output eDP-1 pos 0 0 res 1920x1080
+# output DP-1 pos 1920 0 res 3840x216
 # output eDP-1 disable
 # output DP-1 scale 2
 
-exec /usr/bin/python -m random-background
-exec --no-startup-id /usr/lib/notify-osd/notify-osd
+exec /usr/bin/python -m scripts.random_background
+# exec --no-startup-id /usr/lib/notify-osd/notify-osd
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +2% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -2% #decrease sound volume
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
 
+# Spotify controls
+bindsym XF86AudioPlay exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
+bindsym XF86AudioPrev exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
+bindsym XF86AudioNext exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
+
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 10 # increase screen brightness
-bindsym XF86MonBrightnessDown exec light -U 10 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
+
+# Printscreen
+bindsym Print exec grim -g "$(slurp)" $HOME/screenshot.png
 
 # Notifications
 exec /usr/lib/kdeconnectd
@@ -176,7 +185,13 @@ exec kdeconnect-indicator
 exec mako --default-timeout 5000 #--border-size 8 --border-color '#c9c9c9' --background-color '#ff4747' --text-color "#c9c9c9" --font "Source Code Pro 10"
 
 # Idle/lock config
-exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/monet/the-summer-poppy-field-blur.jpg -s fill --ring-color 0788f9 --ring-clear-color 42f4aa --separator-color ffffff --text-color ffffff'
+exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/ben-austrian/trees-landscape.jpeg -s fill --ring-color 0788f9 --ring-clear-color 42f4aa --separator-color ffffff --text-color ffffff'
 
 # Handle GUI apps that need root access
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# Rotate in tablet mode
+exec --no-startup-id rot8
+
+# Handle display plugin/out
+exec --no-startup-id kanshi

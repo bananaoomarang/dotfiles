@@ -50,7 +50,7 @@
         "format-icons": ["", ""]
     },
     "battery": {
-        "bat": "BAT1",
+        "bat": "BAT0",
         "states": {
             // "good": 95,
             "warning": 30,
@@ -84,9 +84,11 @@
         "on-click": "pavucontrol"
     },
     "custom/spotify": {
-        "format": " {}",
-        "max-length": 40,
-        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
+      "format": " {}",
+      "return-type": "json",
+      "max-length": 40,
+      "interval": 30, // Remove this if your script is endless and write in loop
+      "exec": "/usr/bin/python $HOME/.config/waybar/mediaplayer.py 2> /dev/null"
     },
     "custom/redshift": {
         "format": "",

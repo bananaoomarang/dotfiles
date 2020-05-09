@@ -337,11 +337,18 @@
 
 (use-package pollen-mode)
 
+(use-package brightscript-mode
+  :mode "\\.brs\\'")
+
+;; Spellcheck in org mode
+(add-hook 'org-mode-hook 'turn-on-flyspell)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(brightscript-mode-indent-offset 4)
  '(package-selected-packages
    (quote
     (swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide pipenv glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil)))
