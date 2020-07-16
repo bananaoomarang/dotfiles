@@ -23,9 +23,13 @@ client.unfocused        #333333 #1e1e1e #888888 #292d2e   #222222
 client.urgent           #2f343a #900000 #ffffff #900000   #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
+gaps inner 10
+gaps outer 0
+smart_gaps on
+
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 8
+font pango:Noto Sans 10
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -48,8 +52,15 @@ bindsym $mod+Shift+q kill
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-#bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu "BEMENU_BACKEND=wayland bemenu -i --fn 'Source Code Pro 10'" --term=alacritty --usage-log=/home/milo/.j4-dmenu-log.log
+# bindsym $mod+d exec i3-dmenu-desktop
+# bindsym $mod+d exec j4-dmenu-desktop --dmenu "BEMENU_BACKEND=wayland bemenu -i --fn 'Source Code Pro 10'" --term=alacritty --usage-log=/home/milo/.j4-dmenu-log.log
+bindsym $mod+d exec wofi -I --show drun
+# bindsym $mod+d exec nwggrid
+
+#
+# Clipboard selector
+#
+# bindsym $mod+c exec clipman pick -t wofi
 
 # change focus
 bindsym $mod+h focus left
@@ -134,7 +145,7 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 # bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+Shift+e exec "swaymsg exit"
+bindsym $mod+Shift+e exec "nwgbar"
 
 
 bar {
@@ -150,9 +161,9 @@ input "1739:52560:SYNA3297:00_06CB:CD50_Touchpad" {
 
 bindsym $mod+r mode "resize"
 
-exec --no-startup-id xinput --map-to-output 13 eDP1
+exec xinput --map-to-output 13 eDP1
 
-exec --no-startup-id emacs --daemon
+exec emacs --daemon
 
 # output eDP-1 pos 0 0 res 1920x1080
 # output DP-1 pos 1920 0 res 3840x216
@@ -160,17 +171,17 @@ exec --no-startup-id emacs --daemon
 # output DP-1 scale 2
 
 exec /usr/bin/python -m scripts.random_background
-# exec --no-startup-id /usr/lib/notify-osd/notify-osd
+# exec /usr/lib/notify-osd/notify-osd
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +2% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -2% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 3 +2% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 3 -2% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute 3 toggle # mute sound
 
 # Spotify controls
-bindsym XF86AudioPlay exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
-bindsym XF86AudioPrev exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
-bindsym XF86AudioNext exec --no-startup-id dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
+bindsym XF86AudioPlay exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
+bindsym XF86AudioPrev exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
+bindsym XF86AudioNext exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
@@ -188,10 +199,28 @@ exec mako --default-timeout 5000 #--border-size 8 --border-color '#c9c9c9' --bac
 exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/ben-austrian/trees-landscape.jpeg -s fill --ring-color 0788f9 --ring-clear-color 42f4aa --separator-color ffffff --text-color ffffff'
 
 # Handle GUI apps that need root access
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # Rotate in tablet mode
-exec --no-startup-id rot8
+exec rot8
 
 # Handle display plugin/out
-exec --no-startup-id kanshi
+#exec kanshi
+
+exec redshift
+
+# exec wl-paste -t text --watch clipman store
+# exec wl-paste -w wl-paste >> ~/.clipboard
+
+for_window [class="Action RPG"] floating enable
+for_window [class="Tower Defense"] floating enable
+
+#
+# Manually set GTK theme: https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland
+#
+set $gnome-schema org.gnome.desktop.interface
+
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Arc-Dark'
+    gsettings set $gnome-schema icon-theme 'Papirus'
+}

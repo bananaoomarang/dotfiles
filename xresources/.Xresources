@@ -1,2 +1,2 @@
-*.dpi: 200
-Xft.dpi: 200
+*.dpi: 160
+Xft.dpi: 160

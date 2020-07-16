@@ -2,7 +2,7 @@
     "layer": "bottom",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/spotify"],
     "modules-center": ["sway/window"],
-    "modules-right": ["pulseaudio", "network", "battery", "clock", "tray"],
+    "modules-right": ["custom/redshift", "pulseaudio", "network", "battery", "clock", "tray"],
     // Modules configuration
     // "sway/workspaces": {
     //     "disable-scroll": true,
@@ -87,11 +87,10 @@
       "format": " {}",
       "return-type": "json",
       "max-length": 40,
-      "interval": 30, // Remove this if your script is endless and write in loop
       "exec": "/usr/bin/python $HOME/.config/waybar/mediaplayer.py 2> /dev/null"
     },
     "custom/redshift": {
         "format": "",
-        "on-click": "$HOME/.config/waybar/redshift.py" // Script in resources folder
+        "on-click": "/usr/bin/python $HOME/.config/waybar/redshift.py" // Script in resources folder
     }
 }

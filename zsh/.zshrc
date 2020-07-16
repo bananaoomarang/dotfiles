@@ -52,6 +52,7 @@ antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle zdharma/fast-syntax-highlighting
 antibody bundle mafredri/zsh-async
 antibody bundle sindresorhus/pure
+antibody bundle agkozak/zsh-z
 
 #
 # Vi mode
@@ -95,20 +96,30 @@ ssh-up() {
 }
 
 dcomp() {
-   docker-compose -f $1 --project-directory . $2 "${@:3}"
+   docker-compose -f docker/docker-compose.$1.yml $2 "${@:3}"
 }
+
+alias testdown='docker-compose -f docker/docker-compose.test.yml down -v'
+alias testup='docker-compose -f docker/docker-compose.test.yml up -d'
 
 bigboyseason() {
     if [[ $1 = "undo" ]]; then
         xrdb -load ~/.Xresources.small
         swaymsg output eDP-1 enable
+        rm -f ~/.config/kitty/kitty.conf
+        ln -s ~/.config/kitty/kitty.small.conf ~/.config/kitty/kitty.conf
+
         rm -f ~/.config/alacritty/alacritty.yml
-        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacritty.yml
+        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacrittry.yml
+
         sudo systemctl stop bluetooth
     else
         xrdb -load ~/.Xresources
+        rm -f ~/.config/kitty/kitty.conf
+        ln -s ~/.config/kitty/kitty.big.conf ~/.config/kitty/kitty.conf
+
         rm -f ~/.config/alacritty/alacritty.yml
-        ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty/alacritty.yml
+        ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty.yml
         sudo systemctl start bluetooth
         swaymsg output eDP-1 disable
     fi
@@ -122,6 +133,14 @@ initnvm() {
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
     nvm use
 }
+
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+  alias nvm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && nvm'
+  alias node='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && node'
+  alias npm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && npm'
+fi
 
 # Setup proper term information for emacs ansi-term mode
 [[ $TERM == eterm-color ]] && export TERM=xterm

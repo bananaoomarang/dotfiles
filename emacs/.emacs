@@ -22,6 +22,9 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
+(global-so-long-mode 1)
+
+
 ;; Don't litter so much
 (setq make-backup-files nil)
 
@@ -82,13 +85,23 @@
   (global-evil-surround-mode 1))
 
 (use-package ivy
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "%d/%d ")
+  (ivy-display-style 'fancy)
+
+  :custom-face
+  (ivy-current-match ((t
+                       (:background "#1D3B53"
+                        :foreground "#ffffff"))))
+
+  :bind
+  ("C-c s" . swiper-isearch)
+  ("C-s" . counsel-rg)
+  ("M-y" . counsel-yank-pop)
+
   :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t
-        ivy-count-format "%d/%d ")
-  (global-set-key (kbd "C-s") 'swiper)
-  (global-set-key (kbd "M-y") 'counsel-yank-pop)
-  (global-set-key (kbd "C-c k") 'counsel-ag))
+  (ivy-mode 1))
 
 (use-package swiper)
 (use-package counsel)
@@ -155,6 +168,7 @@
 (use-package company
   :hook (after-init . global-company-mode)
   :config
+  (setq company-dabbrev-downcase nil)
   (setq company-idle-delay 0)
   (setq company-tooltip-align-annotations t))
 
@@ -171,6 +185,9 @@
   ;; otherise!
   :hook (python-mode . pipenv-mode)
         (python-mode . pipenv-activate))
+
+(use-package poetry
+  :bind ("M-p" . poetry-venv-workon))
 
 (use-package pyvenv
   :after projectile
@@ -206,6 +223,7 @@
   :config
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
+  (setq css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
 
 (use-package js2-mode
@@ -241,8 +259,16 @@
   :config
   (tide-hl-identifier-mode +1))
 
+(use-package json-mode
+  :config
+  (setq js-indent-level 2))
 
-(use-package json-mode)
+(use-package add-node-modules-path
+  :config
+  (eval-after-load 'js2-mode
+    '(add-hook 'js2-mode-hook 'add-node-modules-path))
+  (eval-after-load 'css-mode
+    '(add-hook 'css-mode-hook 'add-node-modules-path)))
 
 ;; (use-package beacon
 ;;   :config
@@ -312,8 +338,6 @@
 (use-package forge
   :after magit)
 
-(use-package vterm)
-
 (use-package spaceline
   :config
   (spaceline-emacs-theme))
@@ -321,8 +345,9 @@
 (use-package olivetti)
 
 (use-package counsel-spotify
-  :config
-  (load-file "~/.emacs.d/spotify-secrets.el"))
+  ;;:config
+  ;;(load-file "~/.emacs.d/spotify-secrets.el")
+  )
 
 (use-package twittering-mode
   :config
@@ -332,8 +357,9 @@
 
 (use-package emojify
   :hook (after-init . global-emojify-mode)
-  :config
-  (setq emojify-emoji-set "openmoji"))
+  ;;:config
+  ;;(setq emojify-emoji-set "openmoji")
+)
 
 (use-package pollen-mode)
 
@@ -350,13 +376,11 @@
  ;; If there is more than one, they won't work right.
  '(brightscript-mode-indent-offset 4)
  '(package-selected-packages
-   (quote
-    (swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide pipenv glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil)))
+   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide pipenv glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
  '(safe-local-variable-values
-   (quote
-    ((cider-cljs-lein-repl . "(do (user/go) (user/cljs-repl))")
+   '((cider-cljs-lein-repl . "(do (user/go) (user/cljs-repl))")
      (cider-refresh-after-fn . "reloaded.repl/resume")
-     (cider-refresh-before-fn . "reloaded.repl/suspend")))))
+     (cider-refresh-before-fn . "reloaded.repl/suspend"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -364,9 +388,9 @@
  ;; If there is more than one, they won't work right.
  '(powerline-active1 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
  '(powerline-active2 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
- '(spaceline-evil-normal ((t (:background "#ffc405" :foreground "#000000" :inherit (quote mode-line)))))
- '(spaceline-highlight-face ((t (:background "#ffc405" :foreground "#000000" :inherit (quote mode-line)))))
- '(spaceline-unmodified ((t (:background "#ffc405" :foreground "#000000" :inherit (quote mode-line))))))
+ '(spaceline-evil-normal ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line))))
+ '(spaceline-highlight-face ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line))))
+ '(spaceline-unmodified ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line)))))
 
 (provide '.emacs)
 ;;; .emacs ends here

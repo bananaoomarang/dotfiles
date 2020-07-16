@@ -10,6 +10,8 @@ export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
 
+export QT_QPA_PLATFORMTHEME=qt5ct
+
 #
 # Language
 #
@@ -35,6 +37,8 @@ path=(
   # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
   ~/.rvm/bin
   ~/guile-prefix/bin
+  ~/.poetry/bin
+  /opt/android-sdk/platform-tools
   $path
 )
 
@@ -60,3 +64,5 @@ fi
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+
+export PATH="$HOME/.poetry/bin:$PATH"
