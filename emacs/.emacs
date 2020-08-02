@@ -222,8 +222,8 @@
 (use-package web-mode
   :config
   (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq css-indent-offset 2)
+  (setq web-mode-css-indent-offset 4)
+  (setq css-indent-offset 4)
   (setq web-mode-code-indent-offset 2))
 
 (use-package js2-mode
@@ -257,7 +257,8 @@
   (web-mode . tide-hl-identifier-mode)
 
   :config
-  (tide-hl-identifier-mode +1))
+  (tide-hl-identifier-mode +1)
+  (flycheck-add-next-checker 'javascript-standard 'javascript-tide 'append))
 
 (use-package json-mode
   :config
@@ -386,6 +387,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ivy-current-match ((t (:background "#1D3B53" :foreground "#ffffff"))))
  '(powerline-active1 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
  '(powerline-active2 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
  '(spaceline-evil-normal ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line))))
@@ -394,3 +396,5 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
+
+(setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))

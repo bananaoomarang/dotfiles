@@ -110,7 +110,7 @@ bigboyseason() {
         ln -s ~/.config/kitty/kitty.small.conf ~/.config/kitty/kitty.conf
 
         rm -f ~/.config/alacritty/alacritty.yml
-        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacrittry.yml
+        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacrittry.yml
 
         sudo systemctl stop bluetooth
     else
@@ -119,7 +119,7 @@ bigboyseason() {
         ln -s ~/.config/kitty/kitty.big.conf ~/.config/kitty/kitty.conf
 
         rm -f ~/.config/alacritty/alacritty.yml
-        ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty.yml
+        ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty/alacritty.yml
         sudo systemctl start bluetooth
         swaymsg output eDP-1 disable
     fi
