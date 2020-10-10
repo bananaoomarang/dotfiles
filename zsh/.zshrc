@@ -110,7 +110,7 @@ bigboyseason() {
         ln -s ~/.config/kitty/kitty.small.conf ~/.config/kitty/kitty.conf
 
         rm -f ~/.config/alacritty/alacritty.yml
-        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacrittry.yml
+        ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacritty.yml
 
         sudo systemctl stop bluetooth
     else
@@ -132,6 +132,24 @@ initnvm() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
     nvm use
+}
+
+dstg() {
+    local original_branch=$(git branch --show-current)
+    local deploy_branch=$1
+
+    if [ -z "$1" ]; then
+        deploy_branch=$original_branch
+    fi
+
+    git stash
+    git fetch
+    git checkout $deploy_branch
+    git checkout stage
+    git reset --hard $deploy_branch
+    git push --force-with-lease origin stage
+    git checkout $original_branch
+    # git stash apply
 }
 
 if [ -s "$HOME/.nvm/nvm.sh" ]; then

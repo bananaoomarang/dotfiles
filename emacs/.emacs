@@ -24,6 +24,9 @@
 
 (global-so-long-mode 1)
 
+;; As recommended for lsp-mode performance
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 ;; Don't litter so much
 (setq make-backup-files nil)
@@ -121,6 +124,16 @@
   :config
   (load-theme 'night-owl t))
 
+(use-package lsp-mode
+ :hook ((python-mode . lsp))
+ :config
+ (setq lsp-completion-provider :capf)
+ (setq lsp-enable-snippet nil)
+ (setq lsp-pyls-plugins-flake8-enabled t)
+ :commands lsp)
+
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
 (use-package flycheck
   :after hydra
   :init
@@ -130,6 +143,7 @@
   (setq-default flycheck-temp-prefix ".flycheck")
   (setq-default flycheck-disabled-checkers
                 (append flycheck-disabled-checkers
+                        '(python-mypy)
                         '(javascript-eslint)
                         '(javascript-jshint)
                         '(racket)))
@@ -170,6 +184,7 @@
   :config
   (setq company-dabbrev-downcase nil)
   (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1)
   (setq company-tooltip-align-annotations t))
 
 (use-package rainbow-mode)
@@ -206,13 +221,6 @@
 
   (add-hook 'python-mode-hook 'pyvenv-autoload))
 
-(use-package anaconda-mode
-  :hook (python-mode . anaconda-mode))
-(use-package company-anaconda
-  :after company
-  :config
-  (add-to-list 'company-backends 'company-anaconda))
-
 (use-package rust-mode)
 (use-package flycheck-rust
   :hook (flycheck-mode . flycheck-rust-setup))
@@ -222,8 +230,8 @@
 (use-package web-mode
   :config
   (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 4)
-  (setq css-indent-offset 4)
+  (setq web-mode-css-indent-offset 2)
+  (setq css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
 
 (use-package js2-mode
