@@ -1,29 +1,32 @@
 window {
-  font-family: 'Noto Sans';
+  font-family: 'Source Code Pro';
   margin: 0px;
-  background-color: #264653;
-  border-radius: 12px;
+  background-color: #36454f;
+  border-radius: 6px;
 }
 
 #input {
   padding: 8px;
   border: none;
-  background-color: #264653;
+  background-color: #36454f;
   color: #ffffff;
   font-weight: bold;
-  outline: none;
+}
+
+#input:focus {
+  box-shadow: none;
 }
 
 #inner-box {
   margin: 5px;
   border: none;
-  background-color: #264653;
+  background-color: #36454f;
 }
 
 #outer-box {
   margin: 5px;
   border: none;
-  background-color: #264653;
+  background-color: #36454f;
 }
 
 #scroll {
@@ -38,13 +41,14 @@ window {
 } 
 
 #entry {
-  background-color: #264653;
-  border-radius: 8px;
+  background-color: #36454f;
+  border-radius: 6px;
   margin-top: 4px;
+  font-weight: bold;
+  padding: 4px 8px;
 }
 
 #entry:selected {
-  background-color: #2a9d8f;
+  background-color: #64727D;
   outline: none;
-  font-weight: bold;
 }

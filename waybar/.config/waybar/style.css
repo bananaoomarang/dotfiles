@@ -1,116 +1,120 @@
 * {
-    border: none;
-    border-radius: 0;
-    font-family: Noto Sans, sans-serif;
-    font-size: 14px;
-    min-height: 0;
+  border: none;
+  border-radius: 0;
+  font-family: Source Code Pro, sans-serif;
+  min-height: 0;
+}
+
+window.eDP-1 * {
+  font-size: 16px;
+}
+
+window.DP-2 * {
+  font-size: 22px;
 }
 
 window#waybar {
-    background: rgba(43, 48, 59, 0.5);
-    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
-    color: white;
+  background: #36454f;
+  color: white;
 }
+
+#window {
+  font-weight: bold;
+}
+
+window.eDP-1 #window {
+  padding: 4px 0;
+}
+
+window.DP-2 #window {
+  padding: 8px 0;
+}
+
 
 /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 #workspaces button {
-    padding: 0 5px;
-    background: transparent;
-    color: white;
-    border-bottom: 3px solid transparent;
+  font-weight: bold;
+  padding: 0 12px;
+  background: transparent;
+  color: white;
+  border-bottom: 3px solid transparent;
 }
 
 #workspaces button.focused {
-    background: #64727D;
-    border-bottom: 3px solid white;
+  background: #64727D;
+  border-bottom: 3px solid white;
 }
 
 #mode {
-    background: #64727D;
-    border-bottom: 3px solid white;
+  background: #64727D;
+  border-bottom: 3px solid white;
 }
 
 #clock, #battery, #cpu, #memory, #backlight, #network, #pulseaudio, #custom-spotify, #tray, #mode, #idle_inhibitor, #custom-redshift {
-    padding: 0 10px;
-    margin: 0 0px;
+  padding: 0 16px;
+  margin: 0 0px;
 }
 
 #clock {
-    background-color: #64727D;
+  background: transparent;
 }
 
-#battery {
-    background-color: #ffffff;
-    color: black;
+#pulseaudio, #battery {
+  background: transparent;
 }
 
 #battery.charging {
-    color: white;
-    background-color: #26A65B;
+  color: #fff44f;
 }
 
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: black;
-    }
+@keyframes red-blink {
+  to {
+    background-color: #f53c3c;
+  }
 }
 
 #battery.critical:not(.charging) {
-    background: #f53c3c;
-    color: white;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
-
-#cpu {
-    background: #2ecc71;
-    color: #000000;
+  color: black;
+  animation-name: red-blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 #memory {
-    background: #9b59b6;
+  background: #9b59b6;
 }
 
 #backlight {
-    background: #90b1b1;
+  background: transparent;
 }
 
 #network {
-    background: #2980b9;
+  background: transparent;
 }
 
 #network.disconnected {
-    background: #f53c3c;
-}
-
-#pulseaudio {
-    background: #f1c40f;
-    color: black;
+  color: #f53c3c;
+  font-weight: bold;
 }
 
 #pulseaudio.muted {
-    background: #90b1b1;
-    color: #2a5c45;
+  background: transparent;
 }
 
 #custom-spotify {
-    background: #66cc99;
-    color: #2a5c45;
+  background: transparent;
 }
 
 #custom-redshift {
-    background: #66cc99;
-    color: #2a5c45;
+  background: transparent;
 }
 
 #tray {
-    background-color: #2980b9;
+  background: transparent;
 }
 
 #idle_inhibitor {
-    background-color: #2d3436;
+  background: transparent;
 }

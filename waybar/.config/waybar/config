@@ -2,7 +2,7 @@
     "layer": "bottom",
     "modules-left": ["sway/workspaces", "sway/mode", "custom/spotify"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/redshift", "pulseaudio", "network", "battery", "clock", "tray"],
+    "modules-right": ["network", "custom/redshift", "pulseaudio", "battery", "clock", "tray"],
     // Modules configuration
     // "sway/workspaces": {
     //     "disable-scroll": true,
@@ -19,8 +19,8 @@
     //         "default": ""
     //     }
     // },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
+    "sway/window": {
+        "format": " {}"
     },
     "idle_inhibitor": {
         "format": "{icon}",
@@ -86,7 +86,7 @@
     "custom/spotify": {
       "format": " {}",
       "return-type": "json",
-      "max-length": 40,
+      "max-length": 60,
       "exec": "/usr/bin/python $HOME/.config/waybar/mediaplayer.py 2> /dev/null"
     },
     "custom/redshift": {

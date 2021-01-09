@@ -191,7 +191,7 @@ bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
 
 # Printscreen
 bindsym Shift+Print exec grim -g "$(slurp)" $HOME/screenshot.png
-bindsym Print exec grim -o eDP-1 $HOME/screenshot.png
+bindsym Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused)' | jq -r '.name') $HOME/screenshot.png 
 
 # Notifications
 exec /usr/lib/kdeconnectd

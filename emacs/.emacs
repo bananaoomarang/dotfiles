@@ -46,8 +46,6 @@
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
-(global-undo-tree-mode)
-
 (defconst prettify-symbols-alist
   '(("lambda"  . ?λ)))
 (global-prettify-symbols-mode +1)
@@ -80,11 +78,20 @@
 (add-to-list 'default-frame-alist '(font . "-ADBO-Source Code Pro-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
 (set-frame-font "-ADBO-Source Code Pro-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1")
 
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode))
+
 ;; Packages
 (use-package evil
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-tree))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init 'vterm))
 
 (use-package evil-surround
   :config
@@ -113,6 +120,8 @@
 (use-package counsel)
 (use-package hydra)
 (use-package ivy-hydra)
+
+(use-package all-the-icons)
 
 (use-package projectile
   :config
@@ -149,13 +158,20 @@
 
 (use-package lsp-pyright
   :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))
+  :hook
+  (python-mode
+   .
+   (lambda ()
+     (require 'lsp-pyright)
+     (lsp))))
 
-(use-package night-owl-theme
+(use-package solarized-theme
   :config
-  (load-theme 'night-owl t))
+  ;; This is a workaround to get rid of an ugly underline: https://github.com/bbatsov/solarized-emacs/issues/220
+  (advice-add #'enable-theme :after
+              (lambda (&rest _)
+                (set-face-attribute 'mode-line nil :height 0.8 :overline nil :underline nil)))
+  (load-theme 'solarized-dark t))
 
 (use-package flycheck
   :after hydra
@@ -177,30 +193,7 @@
   (set-face-attribute 'flycheck-error nil
                       :underline nil
                       :weight 'extra-bold
-                      :foreground "red")
-
-  (defhydra hydra-flycheck (:color blue)
-    "
-    ^
-    ^Flycheck^          ^Errors^            ^Checker^
-    ^────────^──────────^──────^────────────^───────^─────
-    _q_ quit            _N_ previous        _?_ describe
-    _M_ manual          _n_ next            _d_ disable
-    _v_ verify setup    _f_ check           _m_ mode
-    ^^                  _l_ list            _s_ select
-    ^^                  ^^                  ^^
-    "
-    ("q" nil)
-    ("N" flycheck-previous-error :color pink)
-    ("n" flycheck-next-error :color pink)
-    ("?" flycheck-describe-checker)
-    ("M" flycheck-manual)
-    ("d" flycheck-disable-checker)
-    ("f" flycheck-buffer)
-    ("l" flycheck-list-errors)
-    ("m" flycheck-mode)
-    ("s" flycheck-select-checker)
-    ("v" flycheck-verify-setup)))
+                      :foreground "red"))
 
 (use-package company
   :hook (after-init . global-company-mode)
@@ -302,7 +295,9 @@
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)
-  (setq dashboard-startup-banner "~/images/vim.png")
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-startup-banner "~/images/vim-pixel.png")
   (setq dashboard-banner-logo-title "Press any button to continue"))
 
 (use-package paredit
@@ -351,8 +346,6 @@
   (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
   (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode)))
 
-(use-package terraform-mode)
-
 (use-package magit
   :config
   (setq git-commit-summary-max-length 80)
@@ -363,18 +356,17 @@
 (use-package forge
   :after magit)
 
-(use-package spaceline
-  :config
-  (spaceline-emacs-theme))
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
 (use-package olivetti)
 
 (use-package vterm)
 
 (use-package counsel-spotify
-  ;;:config
-  ;;(load-file "~/.emacs.d/spotify-secrets.el")
-  )
+  :config
+  (load-file "~/.emacs.d/spotify-secrets.el"))
 
 (use-package twittering-mode
   :config
@@ -403,7 +395,7 @@
  ;; If there is more than one, they won't work right.
  '(brightscript-mode-indent-offset 4)
  '(package-selected-packages
-   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
+   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel multi-term rjsx-mode tide glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
  '(safe-local-variable-values
    '((cider-cljs-lein-repl . "(do (user/go) (user/cljs-repl))")
      (cider-refresh-after-fn . "reloaded.repl/resume")
@@ -413,14 +405,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ivy-current-match ((t (:background "#1D3B53" :foreground "#ffffff"))))
- '(powerline-active1 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
- '(powerline-active2 ((t (:background "#0788f9" :foreground "#f8f8f2"))))
- '(spaceline-evil-normal ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line))))
- '(spaceline-highlight-face ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line))))
- '(spaceline-unmodified ((t (:background "#ffc405" :foreground "#000000" :inherit 'mode-line)))))
+ '(ivy-current-match ((t (:background "#1D3B53" :foreground "#ffffff")))))
 
 (provide '.emacs)
 ;;; .emacs ends here
-
-(setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))
