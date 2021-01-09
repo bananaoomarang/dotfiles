@@ -46,6 +46,8 @@
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
+(global-undo-tree-mode)
+
 (defconst prettify-symbols-alist
   '(("lambda"  . ?λ)))
 (global-prettify-symbols-mode +1)
@@ -81,7 +83,8 @@
 ;; Packages
 (use-package evil
   :config
-  (evil-mode 1))
+  (evil-mode 1)
+  (evil-set-undo-system 'undo-tree))
 
 (use-package evil-surround
   :config
@@ -120,19 +123,39 @@
 (use-package counsel-projectile
   :after projectile)
 
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (setq lsp-completion-provider :capf)
+  (setq lsp-enable-snippet nil)
+  (setq lsp-pyls-plugins-flake8-enabled t)
+  (setq lsp-pyright-venv-path "/home/milo/.cache/pypoetry/virtualenvs")
+  (setq lsp-enable-file-watchers nil)
+
+  (add-hook
+   'lsp-managed-mode-hook
+   (lambda ()
+     (when (derived-mode-p 'python-mode)
+       (flycheck-add-next-checker 'lsp 'python-flake8))))
+
+  :commands lsp)
+
+(use-package lsp-ui
+  :config
+  (setq lsp-ui-doc-position 'at-point))
+
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))
+
 (use-package night-owl-theme
   :config
   (load-theme 'night-owl t))
-
-(use-package lsp-mode
- :hook ((python-mode . lsp))
- :config
- (setq lsp-completion-provider :capf)
- (setq lsp-enable-snippet nil)
- (setq lsp-pyls-plugins-flake8-enabled t)
- :commands lsp)
-
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 
 (use-package flycheck
   :after hydra
@@ -192,18 +215,6 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package pipenv
-  :after projectile
-
-  ;; Not sure if pipenv-activate should be necessary
-  ;; but seems like it doesn't autmatically happen
-  ;; otherise!
-  :hook (python-mode . pipenv-mode)
-        (python-mode . pipenv-activate))
-
-(use-package poetry
-  :bind ("M-p" . poetry-venv-workon))
-
 (use-package pyvenv
   :after projectile
   :config
@@ -219,7 +230,16 @@
                              (concat pdir
                                      (car (split-string (buffer-string)))))))))
 
-  (add-hook 'python-mode-hook 'pyvenv-autoload))
+  (defun pyvenv-poetry-autoload ()
+    "Automatically load poetry venv"
+
+    (let* ((pdir (projectile-project-root))
+           (pyproj (concat pdir "pyproject.toml")))
+      (when (file-exists-p pyproj)
+        (pyvenv-activate (substring (shell-command-to-string "poetry env info -p") 0 -1)))))
+
+  (add-hook 'python-mode-hook 'pyvenv-autoload)
+  (add-hook 'python-mode-hook 'pyvenv-poetry-autoload))
 
 (use-package rust-mode)
 (use-package flycheck-rust
@@ -278,10 +298,6 @@
     '(add-hook 'js2-mode-hook 'add-node-modules-path))
   (eval-after-load 'css-mode
     '(add-hook 'css-mode-hook 'add-node-modules-path)))
-
-;; (use-package beacon
-;;   :config
-;;   (beacon-mode 1))
 
 (use-package dashboard
   :config
@@ -353,6 +369,8 @@
 
 (use-package olivetti)
 
+(use-package vterm)
+
 (use-package counsel-spotify
   ;;:config
   ;;(load-file "~/.emacs.d/spotify-secrets.el")
@@ -385,7 +403,7 @@
  ;; If there is more than one, they won't work right.
  '(brightscript-mode-indent-offset 4)
  '(package-selected-packages
-   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide pipenv glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
+   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel terraform-mode spaceline multi-term rjsx-mode tide glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
  '(safe-local-variable-values
    '((cider-cljs-lein-repl . "(do (user/go) (user/cljs-repl))")
      (cider-refresh-after-fn . "reloaded.repl/resume")

@@ -160,6 +160,12 @@ if [ -s "$HOME/.nvm/nvm.sh" ]; then
   alias npm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && npm'
 fi
 
+alias poe='poetry run poe'
+
+colorpicker() {
+  grim -g "$(slurp -p)" - -t png -o | convert png:- -format '%[pixel:s]\n' info:- | awk -F '[(,)]' '{printf("#%02x%02x%02x\n",$2,$3,$4)}'
+}
+
 # Setup proper term information for emacs ansi-term mode
 [[ $TERM == eterm-color ]] && export TERM=xterm
 export PERL5LIB=~/perl5/lib/perl5:$PERL5LIB

@@ -42,7 +42,7 @@ font pango:Noto Sans 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -190,7 +190,8 @@ bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
 bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
 
 # Printscreen
-bindsym Print exec grim -g "$(slurp)" $HOME/screenshot.png
+bindsym Shift+Print exec grim -g "$(slurp)" $HOME/screenshot.png
+bindsym Print exec grim -o eDP-1 $HOME/screenshot.png
 
 # Notifications
 exec /usr/lib/kdeconnectd
