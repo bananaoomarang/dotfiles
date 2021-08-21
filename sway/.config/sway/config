@@ -29,7 +29,7 @@ smart_gaps on
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:Noto Sans 10
+font pango:Source Code Pro 10
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -42,7 +42,7 @@ font pango:Noto Sans 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -137,8 +137,22 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-
 hide_edge_borders both
+
+#
+# Resizing containers:
+#
+mode "resize" {
+    # ditto, with arrow keys
+    bindsym Left resize shrink width 100 px or 100 ppt
+    bindsym Down resize grow height 100 px or 100 ppt
+    bindsym Up resize shrink height 100 px or 100 ppt
+    bindsym Right resize grow width 100 px or 100 ppt
+
+    # return to default mode
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -147,7 +161,6 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 # bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 bindsym $mod+Shift+e exec "nwgbar"
-
 
 bar {
     swaybar_command waybar
@@ -161,8 +174,6 @@ input "1739:52560:SYNA3297:00_06CB:CD50_Touchpad" {
     scroll_factor 0.4
 }
 
-bindsym $mod+r mode "resize"
-
 exec xinput --map-to-output 13 eDP1
 
 exec emacs --daemon
@@ -170,7 +181,7 @@ exec emacs --daemon
 # output eDP-1 pos 0 0 res 1920x1080
 # output DP-1 pos 1920 0 res 3840x216
 # output eDP-1 disable
-# output DP-1 scale 2
+output DP-1 scale 1.5
 
 exec /usr/bin/python -m scripts.random_background
 # exec /usr/lib/notify-osd/notify-osd
@@ -190,8 +201,15 @@ bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
 bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
 
 # Printscreen
-bindsym Shift+Print exec grim -g "$(slurp)" $HOME/screenshot.png
-bindsym Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused)' | jq -r '.name') $HOME/screenshot.png 
+bindsym Shift+Print exec /bin/bash -c 'grim -g "$(slurp -d)" - | tee $HOME/screenshot.png | wl-copy'
+bindsym Print exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused)' | jq -r '.name') - | tee $HOME/screenshot.png | wl-copy 
+
+#
+# Test for flatpaks
+#
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK SSH_AUTH_SOCK XDG_CURRENT_DESKTOP
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK SSH_AUTH_SOCK XDG_CURRENT_DESKTOP
 
 # Notifications
 exec /usr/lib/kdeconnectd
@@ -205,12 +223,12 @@ exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/ben-austrian/tre
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # Rotate in tablet mode
-exec rot8
+# exec rot8
 
 # Handle display plugin/out
-#exec kanshi
+# exec kanshi
 
-exec redshift
+exec redshift -l '40.672309:-73.944656'
 
 # exec wl-paste -t text --watch clipman store
 # exec wl-paste -w wl-paste >> ~/.clipboard

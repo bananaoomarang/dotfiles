@@ -8,6 +8,11 @@
 
 autoload -Uz compinit
 
+#
+# Necessary for aws cli completion loaded below
+#
+autoload bashcompinit && bashcompinit
+
 typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
 if [ $(date +'%j') != $updated_at ]; then
   compinit -i
@@ -27,6 +32,8 @@ zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 bindkey '^[[Z' reverse-menu-complete # shift+tab to cycle back through completions
 
 zmodload -i zsh/complist
+
+complete -C /usr/bin/aws_completer aws
 
 #
 # History
@@ -99,8 +106,8 @@ dcomp() {
    docker-compose -f docker/docker-compose.$1.yml $2 "${@:3}"
 }
 
-alias testdown='docker-compose -f docker/docker-compose.test.yml down -v'
-alias testup='docker-compose -f docker/docker-compose.test.yml up -d'
+alias testdown='docker-compose -f docker/docker-compose.test.yml -p $(basename $PWD) down -v'
+alias testup='docker-compose -f docker/docker-compose.test.yml -p $(basename $PWD) up -d'
 
 bigboyseason() {
     if [[ $1 = "undo" ]]; then
@@ -111,8 +118,6 @@ bigboyseason() {
 
         rm -f ~/.config/alacritty/alacritty.yml
         ln -s ~/.config/alacritty/alacritty.small.yml ~/.config/alacritty/alacritty.yml
-
-        sudo systemctl stop bluetooth
     else
         xrdb -load ~/.Xresources
         rm -f ~/.config/kitty/kitty.conf
@@ -120,7 +125,6 @@ bigboyseason() {
 
         rm -f ~/.config/alacritty/alacritty.yml
         ln -s ~/.config/alacritty/alacritty.big.yml ~/.config/alacritty/alacritty.yml
-        sudo systemctl start bluetooth
         swaymsg output eDP-1 disable
     fi
 }
@@ -132,6 +136,10 @@ initnvm() {
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
     nvm use
+}
+
+jwtdecode() {
+    echo $1 | step-cli crypto jwt inspect --insecure
 }
 
 dstg() {
@@ -152,13 +160,17 @@ dstg() {
     # git stash apply
 }
 
-if [ -s "$HOME/.nvm/nvm.sh" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
-  alias nvm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && nvm'
-  alias node='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && node'
-  alias npm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && npm'
-fi
+#if [ -s "$HOME/.nvm/nvm.sh" ]; then
+#  export NVM_DIR="$HOME/.nvm"
+#  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+#  alias nvm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && nvm'
+#  alias node='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && node'
+#  alias npm='unalias nvm node npm && . "$NVM_DIR"/nvm.sh && npm'
+#fi
+
+. $HOME/.asdf/asdf.sh
+# append completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
 
 alias poe='poetry run poe'
 

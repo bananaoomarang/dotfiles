@@ -46,6 +46,13 @@
 (show-paren-mode 1)
 (setq show-paren-delay 0)
 
+(setq history-length 100)
+(put 'minibuffer-history 'history-length 50)
+(put 'evil-ex-history 'history-length 50)
+(put 'kill-ring 'history-length 25)
+
+(setq dired-listing-switches "-alh --group-directories-first")
+
 (defconst prettify-symbols-alist
   '(("lambda"  . ?λ)))
 (global-prettify-symbols-mode +1)
@@ -77,6 +84,8 @@
 
 (add-to-list 'default-frame-alist '(font . "-ADBO-Source Code Pro-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1"))
 (set-frame-font "-ADBO-Source Code Pro-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1")
+;; (add-to-list 'default-frame-alist '(font . "Iosevka"))
+;; (set-frame-font "Iosevka")
 
 (use-package undo-tree
   :config
@@ -84,6 +93,8 @@
 
 ;; Packages
 (use-package evil
+  :init
+  (setq evil-want-keybinding nil)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-tree))
@@ -91,11 +102,20 @@
 (use-package evil-collection
   :after evil
   :config
-  (evil-collection-init 'vterm))
+  (setq evil-collection-mode-list '(vterm dired magit))
+  (evil-collection-init))
 
 (use-package evil-surround
   :config
   (global-evil-surround-mode 1))
+
+(use-package openwith
+  :ensure t
+  :config
+  (setq openwith-associations
+        '(("\\.\\(mp4\\|mp3\\|webm\\|avi\\|flv\\|mov\\|pdf\\|docx\\)$"
+           "xdg-open" (file))))
+  (openwith-mode +1))
 
 (use-package ivy
   :custom
@@ -123,6 +143,10 @@
 
 (use-package all-the-icons)
 
+(use-package all-the-icons-dired
+  :config
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
 (use-package projectile
   :config
   (setq projectile-completion-system 'ivy)
@@ -130,17 +154,22 @@
   (projectile-mode +1))
 
 (use-package counsel-projectile
-  :after projectile)
+  :after projectile
+  :config
+  (counsel-projectile-mode))
 
 (use-package lsp-mode
   :init
   (setq lsp-keymap-prefix "C-c l")
   :config
+  (advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
   (setq lsp-completion-provider :capf)
   (setq lsp-enable-snippet nil)
   (setq lsp-pyls-plugins-flake8-enabled t)
+  (setq lsp-pyright-multi-root nil)
   (setq lsp-pyright-venv-path "/home/milo/.cache/pypoetry/virtualenvs")
   (setq lsp-enable-file-watchers nil)
+  ;;(setq lsp-ui-doc-enable nil)
 
   (add-hook
    'lsp-managed-mode-hook
@@ -151,8 +180,9 @@
   :commands lsp)
 
 (use-package lsp-ui
-  :config
-  (setq lsp-ui-doc-position 'at-point))
+  ;;:config
+  ;;(setq lsp-ui-doc-position 'at-point)
+  )
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 
@@ -162,8 +192,19 @@
   (python-mode
    .
    (lambda ()
+     (setq lsp-pyright-multi-root nil)
      (require 'lsp-pyright)
      (lsp))))
+
+(use-package which-key
+  :init
+  (which-key-mode)
+  :config
+  (which-key-setup-side-window-right-bottom)
+  (setq which-key-sort-order 'which-key-key-order-alpha
+    which-key-side-window-max-width 0.33
+    which-key-idle-delay 0.05)
+  :diminish which-key-mode)
 
 (use-package solarized-theme
   :config
@@ -208,6 +249,10 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package dockerfile-mode
+  :config
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+
 (use-package pyvenv
   :after projectile
   :config
@@ -241,6 +286,7 @@
 (use-package kotlin-mode)
 
 (use-package web-mode
+  :mode (".tsx$")
   :config
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
@@ -312,7 +358,35 @@
 
 (use-package yaml-mode
   :config
-  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (when (featurep 'yaml-mode)
+
+    (define-derived-mode cfn-mode yaml-mode
+      "Cloudformation"
+      "Cloudformation template mode.")
+    
+    (add-to-list 'magic-mode-alist
+                 '("\\(---\n\\)?AWSTemplateFormatVersion:" . cfn-mode))
+
+    (when (featurep 'flycheck)
+      (flycheck-define-checker cfn-lint
+        "AWS CloudFormation linter using cfn-lint.
+
+Install cfn-lint first: pip install cfn-lint
+
+See `https://github.com/aws-cloudformation/cfn-python-lint'."
+
+        :command ("cfn-lint" "-f" "parseable" source)
+        :error-patterns ((warning line-start (file-name) ":" line ":" column
+                                  ":" (one-or-more digit) ":" (one-or-more digit) ":"
+                                  (id "W" (one-or-more digit)) ":" (message) line-end)
+                         (error line-start (file-name) ":" line ":" column
+                                ":" (one-or-more digit) ":" (one-or-more digit) ":"
+                                (id "E" (one-or-more digit)) ":" (message) line-end))
+        :modes (cfn-mode))
+
+      (add-to-list 'flycheck-checkers 'cfn-lint)
+      (add-hook 'cfn-mode-hook 'flycheck-mode))))
 
 (use-package clojure-mode
   :config
@@ -333,11 +407,13 @@
 (use-package slime
   :config
   (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
-  (setq inferior-lisp-program "/usr/bin/sbcl")
+  ;(setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq inferior-lisp-program "/usr/bin/clisp")
   (setq slime-contribs '(slime-fancy slime-company)))
 
 (use-package slime-company
-  :after company)
+  :no-require t
+  :after (slime company))
 
 (use-package glsl-mode
   :config
@@ -351,8 +427,6 @@
   (setq git-commit-summary-max-length 80)
   (global-set-key (kbd "C-x g") 'magit-status))
 
-(use-package evil-magit)
-
 (use-package forge
   :after magit)
 
@@ -360,7 +434,9 @@
   :ensure t
   :init (doom-modeline-mode 1))
 
-(use-package olivetti)
+(use-package olivetti
+  :config
+  (global-set-key (kbd "C-c o") 'olivetti-mode))
 
 (use-package vterm)
 
@@ -394,12 +470,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(brightscript-mode-indent-offset 4)
+ '(css-indent-offset 2)
+ '(native-comp-async-report-warnings-errors nil)
+ '(org-agenda-files '("~/org/work.org" "~/org/life.org"))
  '(package-selected-packages
-   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel multi-term rjsx-mode tide glsl-mode tern evil-magit magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
+   '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel multi-term rjsx-mode tide glsl-mode tern magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
  '(safe-local-variable-values
    '((cider-cljs-lein-repl . "(do (user/go) (user/cljs-repl))")
      (cider-refresh-after-fn . "reloaded.repl/resume")
-     (cider-refresh-before-fn . "reloaded.repl/suspend"))))
+     (cider-refresh-before-fn . "reloaded.repl/suspend")))
+ '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -57,12 +57,12 @@ if (( $#commands[(i)lesspipe(|.sh)] )); then
   export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
 fi
 
-if [ -z "$SSH_AUTH_SOCK" ] ; then
-  eval `ssh-agent -s` > /dev/null
-fi
+#if [ -z "$SSH_AUTH_SOCK" ] ; then
+#  eval `ssh-agent -s` > /dev/null
+#fi
 
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
+# if command -v pyenv 1>/dev/null 2>&1; then
+#   eval "$(pyenv init -)"
+# fi
 
 export PATH="$HOME/.poetry/bin:$PATH"
