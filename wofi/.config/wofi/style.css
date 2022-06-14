@@ -1,14 +1,14 @@
 window {
   font-family: 'Source Code Pro';
   margin: 0px;
-  background-color: #36454f;
+  background-color: rgba(0,43,51,0.85);
   border-radius: 6px;
 }
 
 #input {
   padding: 8px;
   border: none;
-  background-color: #36454f;
+  background-color: rgba(0,43,51,0.85);
   color: #ffffff;
   font-weight: bold;
 }
@@ -20,13 +20,13 @@ window {
 #inner-box {
   margin: 5px;
   border: none;
-  background-color: #36454f;
+  background-color: rgba(0,43,51,0.85);
 }
 
 #outer-box {
   margin: 5px;
   border: none;
-  background-color: #36454f;
+  background-color: rgba(0,43,51,0.85);
 }
 
 #scroll {
@@ -41,7 +41,7 @@ window {
 } 
 
 #entry {
-  background-color: #36454f;
+  background-color: rgba(0,43,51,0.85);
   border-radius: 6px;
   margin-top: 4px;
   font-weight: bold;
@@ -49,6 +49,6 @@ window {
 }
 
 #entry:selected {
-  background-color: #64727D;
+  background-color: rgba(0,119,179,0.2);
   outline: none;
 }

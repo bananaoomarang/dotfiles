@@ -25,13 +25,25 @@ function dstg
     git checkout $deploy_branch
 end
 
-function jwtdecode --description 'Display contents of jwt'
-    echo $argv[1] | step-cli crypto jwt inspect --insecure
+function clean_branch
+    set -l delete_branch (git branch --show-current)
+
+    git checkout master
+    git pull origin master
+    git branch -D $delete_branch
 end
 
 function plexup --description 'Mount drive + start plex'
     sudo mount /dev/sda1 /mnt/wddata
     sudo systemctl start plexmediaserver
+end
+
+function testup
+  docker-compose -f docker/docker-compose.test.yml -p (basename $PWD) up -d
+end
+
+function testdown
+    docker-compose -f docker/docker-compose.test.yml -p (basename $PWD) down -v
 end
 
 complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'

@@ -4,6 +4,7 @@
 ;;; I want to satisfy the linter.  I live to satisfy the linter.
 
 ;;; Code:
+
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
@@ -87,11 +88,13 @@
 ;; (add-to-list 'default-frame-alist '(font . "Iosevka"))
 ;; (set-frame-font "Iosevka")
 
+;; Packages
+
 (use-package undo-tree
   :config
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
   (global-undo-tree-mode))
 
-;; Packages
 (use-package evil
   :init
   (setq evil-want-keybinding nil)
@@ -102,7 +105,7 @@
 (use-package evil-collection
   :after evil
   :config
-  (setq evil-collection-mode-list '(vterm dired magit))
+  (setq evil-collection-mode-list '(vterm dired magit sly))
   (evil-collection-init))
 
 (use-package evil-surround
@@ -122,16 +125,18 @@
   (ivy-use-virtual-buffers t)
   (ivy-count-format "%d/%d ")
   (ivy-display-style 'fancy)
+  (ivy-use-selectable-prompt t)
 
   :custom-face
   (ivy-current-match ((t
                        (:background "#1D3B53"
-                        :foreground "#ffffff"))))
+                                    :foreground "#ffffff"))))
 
   :bind
   ("C-c s" . swiper-isearch)
   ("C-s" . counsel-rg)
   ("M-y" . counsel-yank-pop)
+  ("C-x b" . counsel-switch-buffer)
 
   :config
   (ivy-mode 1))
@@ -147,54 +152,67 @@
   :config
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
+(use-package dired-du)
+
 (use-package projectile
   :config
   (setq projectile-completion-system 'ivy)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1))
 
-(use-package counsel-projectile
-  :after projectile
-  :config
-  (counsel-projectile-mode))
+;; (use-package counsel-projectile
+;;   :after projectile
+;;   :config
+;;   (counsel-projectile-mode))
 
-(use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :config
-  (advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
-  (setq lsp-completion-provider :capf)
-  (setq lsp-enable-snippet nil)
-  (setq lsp-pyls-plugins-flake8-enabled t)
-  (setq lsp-pyright-multi-root nil)
-  (setq lsp-pyright-venv-path "/home/milo/.cache/pypoetry/virtualenvs")
-  (setq lsp-enable-file-watchers nil)
-  ;;(setq lsp-ui-doc-enable nil)
-
-  (add-hook
-   'lsp-managed-mode-hook
-   (lambda ()
-     (when (derived-mode-p 'python-mode)
-       (flycheck-add-next-checker 'lsp 'python-flake8))))
-
-  :commands lsp)
-
-(use-package lsp-ui
-  ;;:config
-  ;;(setq lsp-ui-doc-position 'at-point)
-  )
-
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-
-(use-package lsp-pyright
-  :ensure t
+(use-package eglot
   :hook
-  (python-mode
-   .
-   (lambda ()
-     (setq lsp-pyright-multi-root nil)
-     (require 'lsp-pyright)
-     (lsp))))
+  (python-mode . eglot-ensure))
+
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :hook
+;;   (python-mode
+;;    .
+;;    (lambda ()
+;;      (setq lsp-pyright-multi-root nil)
+;;      (require 'lsp-pyright)
+;;      (lsp))))
+
+;; (use-package lsp-mode
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")
+;;   :config
+;;   (advice-add 'lsp :before (lambda (&rest _args) (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
+;;   (setq lsp-completion-provider :capf)
+;;   (setq lsp-enable-snippet nil)
+;;   (setq lsp-pyls-plugins-flake8-enabled t)
+;;   (setq lsp-pyright-multi-root nil)
+;;   (setq lsp-pyright-venv-path "/home/milo/.cache/pypoetry/virtualenvs")
+;;   (setq lsp-enable-file-watchers nil)
+;;   ;;(setq lsp-ui-doc-enable nil)
+
+;;   (add-hook
+;;    'lsp-managed-mode-hook
+;;    (lambda ()
+;;      (when (derived-mode-p 'python-mode)
+;;        (flycheck-add-next-checker 'lsp 'python-flake8))))
+
+;;   :commands lsp)
+
+;; (use-package lsp-ui :commands lsp-ui-mode)
+
+;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :hook
+;;   (python-mode
+;;    .
+;;    (lambda ()
+;;      (setq lsp-pyright-multi-root nil)
+;;      (require 'lsp-pyright)
+;;      (lsp))))
 
 (use-package which-key
   :init
@@ -202,8 +220,8 @@
   :config
   (which-key-setup-side-window-right-bottom)
   (setq which-key-sort-order 'which-key-key-order-alpha
-    which-key-side-window-max-width 0.33
-    which-key-idle-delay 0.05)
+        which-key-side-window-max-width 0.33
+        which-key-idle-delay 0.05)
   :diminish which-key-mode)
 
 (use-package solarized-theme
@@ -228,7 +246,7 @@
                         '(javascript-jshint)
                         '(racket)))
 
-  (flycheck-add-mode 'javascript-standard 'js2-mode)
+  ;; (flycheck-add-mode 'javascript-standard 'js2-mode)
   (flycheck-add-mode 'javascript-standard 'rjsx-mode)
 
   (set-face-attribute 'flycheck-error nil
@@ -242,7 +260,12 @@
   (setq company-dabbrev-downcase nil)
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1)
-  (setq company-tooltip-align-annotations t))
+  (setq company-tooltip-align-annotations t)
+  :bind
+  (:map company-active-map
+        ("<return>" . nil)
+        ("RET" . nil)
+        ("<tab>" . #'company-complete-selection)))
 
 (use-package rainbow-mode)
 
@@ -271,10 +294,14 @@
   (defun pyvenv-poetry-autoload ()
     "Automatically load poetry venv"
 
-    (let* ((pdir (projectile-project-root))
+    (let* ((pname (projectile-project-name))
+           (pdir (projectile-project-root))
            (pyproj (concat pdir "pyproject.toml")))
-      (when (file-exists-p pyproj)
-        (pyvenv-activate (substring (shell-command-to-string "poetry env info -p") 0 -1)))))
+      (when (and
+             (not (cl-search pname pyvenv-virtual-env))
+             (file-exists-p pyproj))
+        (let ((env-path (substring (shell-command-to-string "poetry env info -p") 0 -1)))
+          (pyvenv-activate env-path)))))
 
   (add-hook 'python-mode-hook 'pyvenv-autoload)
   (add-hook 'python-mode-hook 'pyvenv-poetry-autoload))
@@ -293,15 +320,14 @@
   (setq css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
 
-(use-package js2-mode
-  :mode "\\.js\\'"
-  :config
-  (setq js2-basic-offset 2)
-  (setq js2-strict-missing-semi-warning nil))
+;; (use-package js2-mode)
 
 (use-package rjsx-mode
   :mode "\\.js\\'"
   :config
+  (setq js2-basic-offset 2)
+  (setq js2-strict-missing-semi-warning nil)
+  
   (set-face-attribute 'rjsx-attr nil
                       :underline nil
                       :weight 'bold
@@ -314,8 +340,8 @@
 (use-package tide
   :after (company flycheck)
   :hook
-  (js2-mode . tide-setup)
-  (js2-mode . tide-hl-identifier-mode)
+  ;; (js2-mode . tide-setup)
+  ;; (js2-mode . tide-hl-identifier-mode)
 
   (rjsx-mode . tide-setup)
   (rjsx-mode . tide-hl-identifier-mode)
@@ -346,21 +372,50 @@
   (setq dashboard-startup-banner "~/images/vim-pixel.png")
   (setq dashboard-banner-logo-title "Press any button to continue"))
 
-(use-package paredit
+;; (use-package paredit
+;;   :hook
+;;   (clojure-mode . paredit-mode)
+;;   (clojurescript-mode . paredit-mode)
+;;   (lisp-mode . paredit-mode)
+;;   (emacs-lisp-mode . paredit-mode)
+;;   (scheme-mode . paredit-mode)
+;;   (racket-mode . paredit-mode)
+;;   (slime-repl-mode . paredit-mode))
+
+(use-package lispy
   :hook
-  (clojure-mode . paredit-mode)
-  (clojurescript-mode . paredit-mode)
-  (lisp-mode . paredit-mode)
-  (emacs-lisp-mode . paredit-mode)
-  (scheme-mode . paredit-mode)
-  (racket-mode . paredit-mode)
-  (slime-repl-mode . paredit-mode))
+  (clojure-mode . lispy-mode)
+  (clojurescript-mode . lispy-mode)
+  (lisp-mode . lispy-mode)
+  (emacs-lisp-mode . lispy-mode)
+  (scheme-mode . lispy-mode)
+  (racket-mode . lispy-mode))
+
+
+(use-package lispyville
+  :after lispy
+  :hook
+  (clojure-mode . lispyville-mode)
+  (clojurescript-mode . lispyville-mode)
+  (lisp-mode . lispyville-mode)
+  (emacs-lisp-mode . lispyville-mode)
+  (scheme-mode . lispyville-mode)
+  (racket-mode . lispyville-mode)
+  (sly-mode . lispyville-mode)
+  :config
+  (lispyville-set-key-theme
+   '(operators commentary slurp/barf-lispy c-w (escape inert) (additional-movement normal visual motion))))
 
 (use-package yaml-mode
+  ;;:hook
+  ;; (yaml-mode
+  ;;  .
+  ;;  (lambda ()
+  ;;    (lsp)))
+
   :config
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   (when (featurep 'yaml-mode)
-
     (define-derived-mode cfn-mode yaml-mode
       "Cloudformation"
       "Cloudformation template mode.")
@@ -404,16 +459,12 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
     (add-to-list 'geiser-guile-load-path "/home/milo/guile-prefix/lib/guile/2.2/ccache")
     (add-to-list 'geiser-guile-load-path "/home/milo/guile-prefix/lib/guile/2.2/site-ccache")))
 
-(use-package slime
+(use-package sly
   :config
-  (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
-  ;(setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq inferior-lisp-program "/usr/bin/clisp")
-  (setq slime-contribs '(slime-fancy slime-company)))
+  (setq inferior-lisp-program "/sbin/sbcl"))
 
-(use-package slime-company
-  :no-require t
-  :after (slime company))
+(use-package sly-quicklisp
+  :after sly)
 
 (use-package glsl-mode
   :config
@@ -461,6 +512,8 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
 (use-package brightscript-mode
   :mode "\\.brs\\'")
 
+(use-package csv-mode)
+
 ;; Spellcheck in org mode
 (add-hook 'org-mode-hook 'turn-on-flyspell)
 
@@ -471,8 +524,9 @@ See `https://github.com/aws-cloudformation/cfn-python-lint'."
  ;; If there is more than one, they won't work right.
  '(brightscript-mode-indent-offset 4)
  '(css-indent-offset 2)
+ '(dired-du-size-format t)
  '(native-comp-async-report-warnings-errors nil)
- '(org-agenda-files '("~/org/work.org" "~/org/life.org"))
+ '(org-agenda-files nil)
  '(package-selected-packages
    '(swiper ivy use-package emojify twittering-mode ivy-hydra counsel-spotify counsel multi-term rjsx-mode tide glsl-mode tern magit yaml-mode rainbow-mode evil-surround rainbow-delimiters cider indium company olivetti beacon dashboard paredit js2-mode web-mode flycheck projectile dracula-theme evil))
  '(safe-local-variable-values

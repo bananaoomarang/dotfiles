@@ -187,9 +187,9 @@ exec /usr/bin/python -m scripts.random_background
 # exec /usr/lib/notify-osd/notify-osd
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 3 +2% #increase sound volume
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume 3 -2% #decrease sound volume
-bindsym XF86AudioMute exec pactl set-sink-mute 3 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 0 +2% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 0 -2% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle # mute sound
 
 # Spotify controls
 bindsym XF86AudioPlay exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
@@ -197,8 +197,8 @@ bindsym XF86AudioPrev exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2
 bindsym XF86AudioNext exec dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec light -U 5 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec /bin/bash -c '~/.config/sway/scripts/set-brightness.sh up 5'
+bindsym XF86MonBrightnessDown exec /bin/bash -c '~/.config/sway/scripts/set-brightness.sh down 5'
 
 # Printscreen
 bindsym Shift+Print exec /bin/bash -c 'grim -g "$(slurp -d)" - | tee $HOME/screenshot.png | wl-copy'
@@ -214,7 +214,10 @@ exec hash dbus-update-activation-environment 2>/dev/null && \
 # Notifications
 exec /usr/lib/kdeconnectd
 exec kdeconnect-indicator
-exec mako --default-timeout 5000 #--border-size 8 --border-color '#c9c9c9' --background-color '#ff4747' --text-color "#c9c9c9" --font "Source Code Pro 10"
+# exec mako --default-timeout 5000 #--border-size 8 --border-color '#c9c9c9' --background-color '#ff4747' --text-color "#c9c9c9" --font "Source Code Pro 10"
+exec dunst
+#exec swaync
+#bindsym $mod+Shift+n exec swaync-client -t -sw
 
 # Idle/lock config
 exec swayidle -w before-sleep 'swaylock -f -i $HOME/backgrounds/ben-austrian/trees-landscape.jpeg -s fill --ring-color 0788f9 --ring-clear-color 42f4aa --separator-color ffffff --text-color ffffff'
@@ -228,7 +231,7 @@ exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 # Handle display plugin/out
 # exec kanshi
 
-exec redshift -l '40.672309:-73.944656'
+exec wlsunset -l 40.7 -L -74
 
 # exec wl-paste -t text --watch clipman store
 # exec wl-paste -w wl-paste >> ~/.clipboard
@@ -242,6 +245,6 @@ for_window [class="Tower Defense"] floating enable
 set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
-    gsettings set $gnome-schema gtk-theme 'Arc-Dark'
+    gsettings set $gnome-schema gtk-theme 'Orchis-dark'
     gsettings set $gnome-schema icon-theme 'Papirus'
 }
