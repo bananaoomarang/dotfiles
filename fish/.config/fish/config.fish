@@ -2,6 +2,10 @@ set -g hydro_symbol_prompt ▼
 fish_vi_key_bindings
 source ~/.asdf/asdf.fish
 
+function fish_mode_prompt
+  echo ''
+end
+
 set -Ux EDITOR vim
 
 if test -z (pgrep ssh-agent)
@@ -25,8 +29,20 @@ function dstg
     git checkout $deploy_branch
 end
 
-function clean_branch
-    set -l delete_branch (git branch --show-current)
+function clean_branch -d "Remove current git branch + checkout main/master"
+    set -f main_branch main
+
+    git rev-parse --verify master
+    if test $status = 0
+        set -f main_branch master
+    end
+
+    set -f delete_branch (git branch --show-current)
+
+    if test $delete_branch = $main_branch
+        echo "Cant clean main branch!"
+        return
+    end
 
     git checkout master
     git pull origin master
